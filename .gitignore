@@ -1,0 +1,7 @@
+.env
+vendor/
+node_modules/
+
+# Local Docker secrets (development)
+docker/development/secrets/*
+!docker/development/secrets/*.example

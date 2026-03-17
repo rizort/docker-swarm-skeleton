@@ -1,0 +1,18 @@
+services:
+  php:
+    volumes:
+      - ./src:/var/www/html:delegated
+    secrets:
+      - app_secret
+
+  nginx:
+    volumes:
+      - ./src:/var/www/html:ro
+
+secrets:
+  app_secret:
+    file: ./docker/development/secrets/app_secret
+
+networks:
+  webnet:
+    driver: bridge

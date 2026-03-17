@@ -1,0 +1,45 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.php
+    image: ${REGISTRY:-swarm}/swarm-php:${TAG:-latest}
+    environment:
+      - APP_SECRET_FILE=/run/secrets/app_secret
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+    networks:
+      - webnet
+    secrets:
+      - app_secret
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.nginx
+    image: ${REGISTRY:-swarm}/swarm-nginx:${TAG:-latest}
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+    networks:
+      - webnet
+
